@@ -1,0 +1,43 @@
+table.dataTable tbody tr.parent {
+    background-color: #D6EBF2;
+}
+
+.parent > td {
+    border-bottom: 4px solid #ddd;
+}
+
+.layer-1 > td:nth-child(2) {
+    text-indent: 2vw;
+}
+
+.layer-2  > td:nth-child(2) {
+    text-indent: 3.5vw;
+}
+
+.layer-3  > td:nth-child(2){
+    text-indent: 5vw;
+}
+
+.closed, .hidden {
+    display: none;
+}
+
+.dt-control::before{ /* DataTables automaticly ads an arrow as "content" of dt-control::before */
+    transform: rotate(90deg);
+    transition: transform 0.5s ease;
+}
+
+.dt-control.rotate::before {
+    transform: rotate(0deg);
+}
+
+tr > :not(:nth-child(2)), table.dataTable thead th > :not(:nth-child(2)) {
+    text-align: center !important;
+}
+tr > * {
+    border-right: 1px solid black;
+}
+/*
+
+
+*/
