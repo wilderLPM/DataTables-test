@@ -16,7 +16,7 @@ const originalOptions = {
     },
     {
       data: "row_title",
-      title: `<button type="button" id="switch">Switch to Percents</button>`,
+      title: `<button type="button" id="switch" data-bs-toggle="tooltip" title="Basculer entre données brutes et pourcentages">Switch to Percents</button>`,
       render: function (data, type, row) {
         // change the row title if Percents mode is on
         if (type === "display" && isPercents && row.pourcent) {
@@ -30,7 +30,7 @@ const originalOptions = {
       data: "years.0",
       title: "2022",
       render: function (data, type, row) {
-        // if Percents mode is on, convert the values to percents
+        // if Percents mode is on, displays the converted values
         if (isPercents && typeof row.isDenominator === "number") {
           denominators[row.isDenominator][0] = data;
         }
@@ -44,7 +44,6 @@ const originalOptions = {
       data: "years.1",
       title: "2023",
       render: function (data, type, row) {
-        // if Percents mode is on, convert the values to percents
         if (isPercents && typeof row.isDenominator === "number") {
           denominators[row.isDenominator][1] = data;
         }
@@ -58,7 +57,6 @@ const originalOptions = {
       data: "years.2",
       title: "2024",
       render: function (data, type, row) {
-        // if Percents mode is on, convert the values to percents
         if (isPercents && typeof row.isDenominator === "number") {
           denominators[row.isDenominator][2] = data;
         }
@@ -73,30 +71,33 @@ const originalOptions = {
     // All the rows objects
     {
       row_title: "Total Stagiaires",
-      years: [100, 120, 140],
+      years: [368, 344, 154],
       layer: 0,
       isDenominator: 0,
     },
     {
       row_title: "Total Inscrits",
-      years: [30, 30, 40],
+      years: [345, 326, 149],
       pourcent: "Taux de présentation à l'examen",
       isParent: true,
       layer: 0,
       children: [2],
       isDenominator: 1,
       denominator: 0,
+      title: "Total Stagiaires - Abandons",
+      pourcentTitle: "Total Inscrits ÷ Total Stagiaires x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
     },
     {
       row_title: "Présents",
-      years: [29, 30, 38],
+      years: [302, 299, 134],
       pourcent: "Taux de présence",
       isChild: true,
       layer: 1,
       denominator: 1,
+      pourcentTitle: "Présents ÷ Total Inscrits x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
@@ -109,29 +110,32 @@ const originalOptions = {
     },
     {
       row_title: "Absents",
-      years: [30, 30, 40],
+      years: [43, 27, 15],
       pourcent: "Absentéisme",
       isChild: true,
       layer: 1,
       denominator: 1,
+      title: "Stagiaires inscrits mais absents à l'examen",
+      pourcentTitle: "Absents ÷ Total Inscrits x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
     },
     {
       row_title: "Échecs",
-      years: [30, 30, 40],
+      years: [28, 29, 11],
       pourcent: "Taux d'échecs",
       isChild: true,
       layer: 1,
       denominator: 1,
+      pourcentTitle: "Échecs ÷ Total Inscrits x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
     },
     {
       row_title: "Réussites",
-      years: [30, 30, 40],
+      years: [274, 270, 123],
       pourcent: "Taux de réussite",
       isParent: true,
       isChild: true,
@@ -139,49 +143,57 @@ const originalOptions = {
       children: [7, 8, 9, 10],
       isDenominator: 2,
       denominator: 1,
+      title: "Stagiaires avec un résultat positif à l'examen",
+      pourcentTitle: "Réussites ÷ Total Inscrits x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
     },
     {
       row_title: "Partielle",
-      years: [30, 30, 40],
+      years: [19, 23, 7],
       isChild: true,
       layer: 2,
       denominator: 2,
+      pourcentTitle: "Réussites Partielles ÷ Réussites x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
     },
     {
       row_title: "Totale",
-      years: [30, 30, 40],
+      years: [255, 247, 116],
       isParent: true,
       isChild: true,
       layer: 2,
       children: [9, 10],
       isDenominator: 3,
       denominator: 2,
+      pourcentTitle: "Réussites Totales ÷ Réussites x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
     },
     {
       row_title: "TP Obtenus",
-      years: [30, 30, 40],
+      years: [207, 206, 101],
       isChild: true,
       layer: 3,
       denominator: 3,
+      title: "Titres Professionnels obtenu",
+      pourcentTitle: "TP Obtenus ÷ Réussites Totales x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
     },
     {
       row_title: "Parcours Certifiants Validés",
-      years: [30, 30, 40],
+      years: [48, 41, 15],
       isChild: true,
       layer: 3,
       denominator: 3,
+      title: "Objectif de CCP atteint",
+      pourcentTitle: "Parcours Certifiants Validés ÷ Réussites Totales x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
@@ -210,6 +222,16 @@ const originalOptions = {
       targets: [2, 3, 4],
       width: "226px",
     },
+    {
+      targets: 1,
+      createdCell: function (td, cellData, rowData, row, col) {
+        // adds tooltip to the row title
+        $(td).attr({
+          "data-bs-toggle": "tooltip",
+          title: isPercents ? rowData.pourcentTitle : rowData.title,
+        });
+      },
+    },
   ],
 };
 
@@ -226,7 +248,9 @@ function toPercents(years, denominatorKey) {
   );
 }
 const initTable = (options) => {
-  return $("#table").DataTable(options);
+  const newTable = $("#table").DataTable(options);
+  $('[data-bs-toggle="tooltip"]').tooltip({ placement: "top" });
+  return newTable;
 };
 
 $(async function () {
@@ -245,12 +269,16 @@ $(async function () {
     }
   });
 
-  $("#table").on("click", "#switch", () => {
+  $("#table").on("click", "#switch", function () {
     // event listener to switch between normal and percents mode
+    $(this).tooltip("hide");
     isPercents = !isPercents;
     $("#table").DataTable().destroy(); // would be better to redraw the table instead of destroying it but it doesn't work
     $("#table").empty();
     table = initTable(originalOptions);
+    if (isPercents) {
+      $("#switch").text("Switch to Raw Data");
+    }
   });
 
   const open = (row) => {

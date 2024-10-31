@@ -37,7 +37,3 @@ tr > :not(:nth-child(2)), table.dataTable thead th > :not(:nth-child(2)) {
 tr > * {
     border-right: 1px solid black;
 }
-/*
-
-
-*/
