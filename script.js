@@ -30,11 +30,12 @@ const originalOptions = {
       data: "years.0",
       title: "2022",
       render: function (data, type, row) {
-        // if Percents mode is on, displays the converted values
         if (isPercents && typeof row.isDenominator === "number") {
-          denominators[row.isDenominator][0] = data;
+          // if row is a denominator, stores the value of data in the denominators array
+          denominators[row.isDenominator][0] = data; // data = data/row.years[0]
         }
         if (isPercents && row.percents) {
+          // if Percents mode is on, displays the converted values
           return row.percents[0];
         }
         return data;
@@ -249,7 +250,7 @@ function toPercents(years, denominatorKey) {
 }
 const initTable = (options) => {
   const newTable = $("#table").DataTable(options);
-  $('[data-bs-toggle="tooltip"]').tooltip({ placement: "top" });
+  $('[data-bs-toggle="tooltip"]').tooltip();
   return newTable;
 };
 

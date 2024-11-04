@@ -7,15 +7,15 @@ table.dataTable tbody tr.parent {
 }
 
 .layer-1 > td:nth-child(2) {
-    text-indent: 2vw;
+    text-indent: 12%;
 }
 
 .layer-2  > td:nth-child(2) {
-    text-indent: 3.5vw;
+    text-indent: 24%;
 }
 
 .layer-3  > td:nth-child(2){
-    text-indent: 5vw;
+    text-indent: 36%;
 }
 
 .closed, .hidden {
