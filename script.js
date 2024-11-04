@@ -18,54 +18,28 @@ const originalOptions = {
       data: "row_title",
       title: `<button type="button" id="switch" data-bs-toggle="tooltip" title="Basculer entre données brutes et pourcentages">Switch to Percents</button>`,
       render: function (data, type, row) {
-        // change the row title if Percents mode is on
-        if (type === "display" && isPercents && row.pourcent) {
-          return row.pourcent;
-        }
-        return data;
+        // change the row title if Percents mode is on and add a '?' icon if there is a tooltip
+        const tooltip =
+          (isPercents && row.pourcentTooltip) || (!isPercents && row.tooltip)
+            ? ` <span class="tooltip-icon">?</span>`
+            : "";
+        return isPercents && row.pourcent
+          ? row.pourcent + tooltip
+          : data + tooltip;
       },
       width: "460px",
     },
     {
       data: "years.0",
       title: "2022",
-      render: function (data, type, row) {
-        if (isPercents && typeof row.isDenominator === "number") {
-          // if row is a denominator, stores the value of data in the denominators array
-          denominators[row.isDenominator][0] = data; // data = data/row.years[0]
-        }
-        if (isPercents && row.percents) {
-          // if Percents mode is on, displays the converted values
-          return row.percents[0];
-        }
-        return data;
-      },
     },
     {
       data: "years.1",
       title: "2023",
-      render: function (data, type, row) {
-        if (isPercents && typeof row.isDenominator === "number") {
-          denominators[row.isDenominator][1] = data;
-        }
-        if (isPercents && row.percents) {
-          return row.percents[1];
-        }
-        return data;
-      },
     },
     {
       data: "years.2",
       title: "2024",
-      render: function (data, type, row) {
-        if (isPercents && typeof row.isDenominator === "number") {
-          denominators[row.isDenominator][2] = data;
-        }
-        if (isPercents && row.percents) {
-          return row.percents[2];
-        }
-        return data;
-      },
     },
   ],
   data: [
@@ -85,8 +59,8 @@ const originalOptions = {
       children: [2],
       isDenominator: 1,
       denominator: 0,
-      title: "Total Stagiaires - Abandons",
-      pourcentTitle: "Total Inscrits ÷ Total Stagiaires x 100",
+      tooltip: "Total Stagiaires - Abandons",
+      pourcentTooltip: "Total Inscrits ÷ Total Stagiaires x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
@@ -98,7 +72,7 @@ const originalOptions = {
       isChild: true,
       layer: 1,
       denominator: 1,
-      pourcentTitle: "Présents ÷ Total Inscrits x 100",
+      pourcentTooltip: "Présents ÷ Total Inscrits x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
@@ -116,8 +90,8 @@ const originalOptions = {
       isChild: true,
       layer: 1,
       denominator: 1,
-      title: "Stagiaires inscrits mais absents à l'examen",
-      pourcentTitle: "Absents ÷ Total Inscrits x 100",
+      tooltip: "Stagiaires inscrits mais absents à l'examen",
+      pourcentTooltip: "Absents ÷ Total Inscrits x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
@@ -129,7 +103,7 @@ const originalOptions = {
       isChild: true,
       layer: 1,
       denominator: 1,
-      pourcentTitle: "Échecs ÷ Total Inscrits x 100",
+      pourcentTooltip: "Échecs ÷ Total Inscrits x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
@@ -144,8 +118,8 @@ const originalOptions = {
       children: [7, 8, 9, 10],
       isDenominator: 2,
       denominator: 1,
-      title: "Stagiaires avec un résultat positif à l'examen",
-      pourcentTitle: "Réussites ÷ Total Inscrits x 100",
+      tooltip: "Stagiaires avec un résultat positif à l'examen",
+      pourcentTooltip: "Réussites ÷ Total Inscrits x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
@@ -156,7 +130,7 @@ const originalOptions = {
       isChild: true,
       layer: 2,
       denominator: 2,
-      pourcentTitle: "Réussites Partielles ÷ Réussites x 100",
+      pourcentTooltip: "Réussites Partielles ÷ Réussites x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
@@ -170,7 +144,7 @@ const originalOptions = {
       children: [9, 10],
       isDenominator: 3,
       denominator: 2,
-      pourcentTitle: "Réussites Totales ÷ Réussites x 100",
+      pourcentTooltip: "Réussites Totales ÷ Réussites x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
@@ -181,8 +155,8 @@ const originalOptions = {
       isChild: true,
       layer: 3,
       denominator: 3,
-      title: "Titres Professionnels obtenu",
-      pourcentTitle: "TP Obtenus ÷ Réussites Totales x 100",
+      tooltip: "Titres Professionnels obtenu",
+      pourcentTooltip: "TP Obtenus ÷ Réussites Totales x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
@@ -193,8 +167,8 @@ const originalOptions = {
       isChild: true,
       layer: 3,
       denominator: 3,
-      title: "Objectif de CCP atteint",
-      pourcentTitle: "Parcours Certifiants Validés ÷ Réussites Totales x 100",
+      tooltip: "Objectif de CCP atteint",
+      pourcentTooltip: "Parcours Certifiants Validés ÷ Réussites Totales x 100",
       get percents() {
         return toPercents(this.years, this.denominator);
       },
@@ -222,14 +196,26 @@ const originalOptions = {
     {
       targets: [2, 3, 4],
       width: "226px",
+      render: function (data, type, row, meta) {
+        const i = meta.col - 2; // meta.col = column index
+        // if row is a denominator, stores the value of data in the denominators array
+        if (isPercents && typeof row.isDenominator === "number") {
+          denominators[row.isDenominator][i] = data;
+        }
+        // if Percents mode is on, displays the converted values
+        if (isPercents && row.percents) {
+          return row.percents[i];
+        }
+        return data;
+      },
     },
     {
       targets: 1,
       createdCell: function (td, cellData, rowData, row, col) {
-        // adds tooltip to the row title
+        // adds tooltip to cells of column 1
         $(td).attr({
           "data-bs-toggle": "tooltip",
-          title: isPercents ? rowData.pourcentTitle : rowData.title,
+          title: isPercents ? rowData.pourcentTooltip : rowData.tooltip, // Bootstrap doesn't show empty tooltips
         });
       },
     },
@@ -250,7 +236,9 @@ function toPercents(years, denominatorKey) {
 }
 const initTable = (options) => {
   const newTable = $("#table").DataTable(options);
-  $('[data-bs-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip({
+    placement: "right",
+  });
   return newTable;
 };
 
@@ -274,29 +262,13 @@ $(async function () {
     // event listener to switch between normal and percents mode
     $(this).tooltip("hide");
     isPercents = !isPercents;
-    $("#table").DataTable().destroy(); // would be better to redraw the table instead of destroying it but it doesn't work
+    $("#table").DataTable().destroy(); // would be better to redraw the table instead of destroying it but it's more complex
     $("#table").empty();
     table = initTable(originalOptions);
     if (isPercents) {
       $("#switch").text("Switch to Raw Data");
     }
   });
-
-  const open = (row) => {
-    // same logic than close() but in reverse
-
-    $(row.node()).find("td.dt-control").removeClass("rotate");
-
-    for (let i = 0; i < table.rows().data().length; i++) {
-      const data = table.rows().data()[i];
-      if (data.layer > row.data().layer && row.data().children.includes(i)) {
-        table.row(i).node().classList.remove("hidden");
-        if (data.layer === row.data().layer + 1) {
-          table.row(i).node().classList.remove("closed");
-        }
-      }
-    }
-  };
 
   const close = (row) => {
     $(row.node()).find("td.dt-control").addClass("rotate"); // makes the arrow point right
@@ -309,6 +281,22 @@ $(async function () {
         if (data.layer === row.data().layer + 1) {
           // if the row is a direct child of the parent row
           table.row(i).node().classList.add("closed"); // close the row
+        }
+      }
+    }
+  };
+
+  const open = (row) => {
+    // same logic than close() but in reverse
+
+    $(row.node()).find("td.dt-control").removeClass("rotate");
+
+    for (let i = 0; i < table.rows().data().length; i++) {
+      const data = table.rows().data()[i];
+      if (data.layer > row.data().layer && row.data().children.includes(i)) {
+        table.row(i).node().classList.remove("hidden");
+        if (data.layer === row.data().layer + 1) {
+          table.row(i).node().classList.remove("closed");
         }
       }
     }

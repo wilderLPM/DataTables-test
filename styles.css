@@ -1,3 +1,5 @@
+/* Have to be very specific with the selectors to override the default DataTables styling */
+
 table.dataTable tbody tr.parent {
     background-color: #D6EBF2;
 }
@@ -6,16 +8,22 @@ table.dataTable tbody tr.parent {
     border-bottom: 4px solid #ddd;
 }
 
-.layer-1 > td:nth-child(2) {
-    text-indent: 12%;
+table.dataTable tbody tr td:nth-child(2) {  
+    padding-right: 15px;
+    display: flex;
+    justify-content: space-between;
 }
 
-.layer-2  > td:nth-child(2) {
-    text-indent: 24%;
+table.dataTable tbody tr.layer-1 td:nth-child(2) {
+    padding-left: 70px;
 }
 
-.layer-3  > td:nth-child(2){
-    text-indent: 36%;
+table.dataTable tbody tr.layer-2 td:nth-child(2) {
+    padding-left: 140px;
+}
+
+table.dataTable tbody tr.layer-3 td:nth-child(2){
+    padding-left: 210px;
 }
 
 .closed, .hidden {
@@ -36,4 +44,15 @@ tr > :not(:nth-child(2)), table.dataTable thead th > :not(:nth-child(2)) {
 }
 tr > * {
     border-right: 1px solid black;
+}
+
+/* Tooltip */
+.tooltip-icon {
+    font-weight: bold;
+    color: #007bff;
+    margin-left: 5px;
+    text-decoration: none;
+}
+.tooltip-icon:hover {
+    color: #0056b3;
 }
